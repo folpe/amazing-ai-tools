@@ -1,0 +1,24 @@
+name: Lint JSON
+
+on:
+  pull_request:
+    paths:
+      - "**/*.json"
+  push:
+    branches:
+      - main
+    paths:
+      - "**/*.json"
+
+jobs:
+  lint-json:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate JSON
+        run: |
+          git ls-files '*.json' | while read -r f; do
+            echo "🔍 Checking: $f"
+            jq empty "$f" || { echo "❌ Invalid JSON in $f"; exit 1; }
+          done
